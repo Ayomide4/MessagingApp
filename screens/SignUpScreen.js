@@ -9,20 +9,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function SignUpScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
       <View style={styles.loginContainer}>
         <View style={styles.form}>
-          <Text style={styles.title}>Log In</Text>
+          <Text style={styles.title}>Sign Up</Text>
           <TextInput style={styles.input} placeholder="Enter email" />
           <TextInput style={styles.input} placeholder="Enter password" />
           <TouchableOpacity style={styles.button}>
-            <Text style={{ color: "white", fontSize: 18 }}>Log In</Text>
+            <Text style={{ color: "white", fontSize: 18 }}>Sign Up</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: "row", marginTop: 20 }}>
-            <Text style={{ fontSize: 16 }}>Don't have an account? </Text>
+            <Text style={{ fontSize: 16 }}>Already have an account? </Text>
             <TouchableOpacity>
               <Text
                 style={{
@@ -31,7 +31,7 @@ export default function LoginScreen() {
                   fontSize: 16,
                 }}
               >
-                Sign Up
+                Log in
               </Text>
             </TouchableOpacity>
           </View>
