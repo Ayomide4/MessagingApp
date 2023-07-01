@@ -1,4 +1,5 @@
 import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   View,
   TouchableOpacity,
@@ -7,62 +8,67 @@ import {
   SafeAreaView,
   TextInput,
 } from "react-native";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    borderColor: "red",
-    borderWidth: 1,
-    width: "100%",
-  },
-
-  tContainer: {
-    width: "80%",
-  },
-
-  title: {
-    fontSize: 40,
-    fontWeight: "medium",
-    marginTop: 90,
-  },
-
-  newChat: {
-    borderRadius: 100,
-    height: 45,
-    width: 45,
-    color: "white",
-    backgroundColor: "blue",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    top: 50,
-    right: 20,
-  },
-});
+import Conversations from "../components/Conversations";
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.tContainer}>
-        <Text style={styles.title}>Message your friends</Text>
-      </View>
-      <TouchableOpacity style={styles.newChat}>
-        <Text>to</Text>
-      </TouchableOpacity>
+      <LinearGradient
+        // Background Linear Gradient
+        colors={["#24779C", "#C69BB9"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.75, y: 0.5 }}
+        style={styles.background}
+      />
       <View
         style={{
-          padding: 10,
-          width: "95%",
-          backgroundColor: "#f2f2f2",
-          flexDirection: "row",
+          width: "90%",
+          height: "100%",
           alignItems: "center",
-          borderRadius: 10,
         }}
       >
-        <TextInput style={{ fontSize: 15 }} placeholder="Search" />
+        <Text style={styles.title}>Send a message to your friends</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          placeholderTextColor={"white"}
+        />
       </View>
+      <Conversations />
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+  },
+  background: {
+    flex: 1,
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+  },
+  title: {
+    absolute: "absolute",
+    top: 100,
+    fontSize: 40,
+    fontWeight: "600",
+    color: "white",
+  },
+  input: {
+    absolute: "absolute",
+    top: 120,
+    padding: 12,
+    marginVertical: 10,
+    height: 50,
+    width: "100%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 10,
+    fontSize: 18,
+  },
+});
