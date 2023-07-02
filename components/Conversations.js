@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import {
   FlatList,
   Image,
@@ -7,6 +8,7 @@ import {
   Text,
   View,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 
 export default function Conversations() {
@@ -19,7 +21,7 @@ export default function Conversations() {
         const users = data.results;
         const messages = users.map((user, index) => {
           return (
-            <View key={index} style={styles.conversationComponent}>
+            <TouchableOpacity key={index} style={styles.conversationComponent}>
               <View style={styles.conversation}>
                 <Image
                   source={{ uri: user.picture.thumbnail }}
@@ -38,10 +40,10 @@ export default function Conversations() {
                 </View>
                 <View style={styles.messageRead}>
                   <Text style={styles.displayMessage}>Hey, how are you?</Text>
-                  <FontAwesome5 name={"check"} />
+                  <MaterialIcons name={"done-all"} size={20} />
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           );
         });
         setData(messages);
