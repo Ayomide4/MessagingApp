@@ -15,7 +15,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <LinearGradient
         // Background Linear Gradient
-        colors={["#24779C", "#C69BB9"]}
+        colors={["#08071A", "#B7AFFD"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0.75, y: 0.5 }}
         style={styles.background}
@@ -23,7 +23,7 @@ export default function HomeScreen() {
       <View
         style={{
           width: "90%",
-          height: "100%",
+          height: "auto",
           alignItems: "center",
         }}
       >
@@ -49,22 +49,19 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     position: "absolute",
-    height: "100%",
+    height: "200%",
     width: "100%",
   },
   title: {
-    absolute: "absolute",
-    top: 100,
-    fontSize: 40,
+    fontSize: 36,
     fontWeight: "600",
     color: "white",
+    marginBottom: 40,
   },
   input: {
-    absolute: "absolute",
-    top: 120,
     padding: 12,
-    marginVertical: 10,
     height: 50,
+    marginBottom: 20,
     width: "100%",
     borderColor: "#ccc",
     borderWidth: 1,

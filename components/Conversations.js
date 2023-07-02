@@ -1,63 +1,56 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-
-const messages = [
-  { name: "John", message: "Hey, how are you?" },
-  { name: "Teanna", message: "Hi" },
-  { name: "James", message: "Yo whats up?" },
-];
+import React, { useEffect, useState } from "react";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+} from "react-native";
 
 export default function Conversations() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("https://randomuser.me/api/?results=20")
+      .then((response) => response.json())
+      .then((data) => {
+        const users = data.results;
+        const messages = users.map((user, index) => {
+          return (
+            <View key={index} style={styles.conversationComponent}>
+              <View style={styles.conversation}>
+                <Image
+                  source={{ uri: user.picture.thumbnail }}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 50,
+                    marginVertical: 10,
+                  }}
+                />
+                <View style={styles.online}>
+                  <Text
+                    style={styles.name}
+                  >{`${user.name.first} ${user.name.last}`}</Text>
+                  <Text>2:00pm</Text>
+                </View>
+                <View style={styles.messageRead}>
+                  <Text style={styles.displayMessage}>Hey, how are you?</Text>
+                  <FontAwesome5 name={"check"} />
+                </View>
+              </View>
+            </View>
+          );
+        });
+        setData(messages);
+      });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          width: "100%",
-          height: "30%",
-          backgroundColor: "white",
-          borderRadius: 20,
-          zIndex: 1,
-          borderWidth: 1,
-          borderColor: "black",
-          position: "relative",
-          top: 0,
-          left: 0,
-        }}
-      >
-        {
-          <Text style={{ fontSize: 26, fontWeight: 600, marginTop: 50 }}>
-            {messages[0].name}
-          </Text>
-        }
-      </View>
-      <View
-        style={{
-          width: "100%",
-          height: "30%",
-          backgroundColor: "white",
-          borderRadius: 20,
-          zIndex: 0,
-          borderWidth: 1,
-          borderColor: "black",
-          position: "relative",
-          top: -25,
-          left: 0,
-        }}
-      ></View>
-      <View
-        style={{
-          width: "100%",
-          height: "30%",
-          backgroundColor: "white",
-          borderRadius: 20,
-          zIndex: -1,
-          borderWidth: 1,
-          borderColor: "black",
-          position: "relative",
-          top: -50,
-          left: 0,
-        }}
-      ></View>
+      <ScrollView style={styles.scroll}>{data}</ScrollView>
     </View>
   );
 }
@@ -65,9 +58,7 @@ export default function Conversations() {
 const styles = StyleSheet.create({
   container: {
     width: "98%",
-    height: "65%",
-    position: "absolute",
-    top: "45%",
+    height: "80%",
     borderRadius: 20,
   },
   card: {
@@ -76,5 +67,40 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginBottom: 10,
+  },
+  scroll: {
+    width: "100%",
+    height: "100%",
+    paddingTop: 50,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  conversationComponent: {
+    height: 150,
+    marginBottom: 10,
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    zIndex: -1,
+    position: "relative",
+    top: -50,
+    left: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  conversation: {
+    width: "92%",
+    height: "100%",
+  },
+  online: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  messageRead: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
