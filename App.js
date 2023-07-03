@@ -27,6 +27,7 @@ export default function App() {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="Direct Message"
           component={DirectMessage}
