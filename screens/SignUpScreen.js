@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function SignUpScreen() {
+export default function SignUpScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
@@ -30,6 +30,7 @@ export default function SignUpScreen() {
                   textDecorationLine: "underline",
                   fontSize: 16,
                 }}
+                onPress={() => navigation.goBack()}
               >
                 Log in
               </Text>

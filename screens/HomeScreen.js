@@ -16,9 +16,10 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <LinearGradient
         // Background Linear Gradient
-        colors={["#08071A", "#B7AFFD"]}
+        colors={["#000000", "#4c46cb", "#f2f2f2"]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0.75, y: 0.5 }}
+        locations={[0, 0.75, 1]}
+        end={{ x: 0.5, y: 0.5 }}
         style={styles.background}
       />
       <View style={styles.profileContainer}>
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   input: {
     padding: 12,
     height: 50,
-    marginBottom: 20,
+    marginBottom: 5,
     width: "84%",
     borderColor: "#ccc",
     borderWidth: 1,

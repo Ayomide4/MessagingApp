@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
@@ -18,12 +18,15 @@ export default function LoginScreen() {
           <Text style={styles.title}>Log In</Text>
           <TextInput style={styles.input} placeholder="Enter email" />
           <TextInput style={styles.input} placeholder="Enter password" />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Home")}
+          >
             <Text style={{ color: "white", fontSize: 18 }}>Log In</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: "row", marginTop: 20 }}>
             <Text style={{ fontSize: 16 }}>Don't have an account? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Sign Up")}>
               <Text
                 style={{
                   color: "#131929",
