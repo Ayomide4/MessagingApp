@@ -1,4 +1,6 @@
-import React from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,18 +12,53 @@ import {
 } from "react-native";
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const auth = FIREBASE_AUTH;
+
+  const onHandleLogin = async () => {
+    //   signInWithEmailAndPassword(auth, email, password)
+    //     .then(() => {
+    //       console.log("Login success");
+    //       navigation.navigate("Home");
+    //     })
+    //     .catch((error) => alert("login error", error.message));
+    // }
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      console.log(response);
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log("login error", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
       <View style={styles.loginContainer}>
         <View style={styles.form}>
           <Text style={styles.title}>Log In</Text>
-          <TextInput style={styles.input} placeholder="Enter email" />
-          <TextInput style={styles.input} placeholder="Enter password" />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Home")}
-          >
+          <TextInput
+            style={styles.input}
+            placeholder="enter email"
+            autoCapitalize="none"
+            autoFocus={true}
+            textContentType="emailAddress"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="enter password"
+            autoCorrect={false}
+            secureTextEntry={true}
+            textContentType="password"
+            autoCapitalize="none"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
             <Text style={{ color: "white", fontSize: 18 }}>Log In</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: "row", marginTop: 20 }}>

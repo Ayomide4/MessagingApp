@@ -1,4 +1,6 @@
-import React from "react";
+import { React, useState } from "react";
+import { FIREBASE_AUTH } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,15 +12,49 @@ import {
 } from "react-native";
 
 export default function SignUpScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const auth = FIREBASE_AUTH;
+
+  const onSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("Sign up success", user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Sign up error", errorCode, errorMessage);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
       <View style={styles.loginContainer}>
         <View style={styles.form}>
           <Text style={styles.title}>Sign Up</Text>
-          <TextInput style={styles.input} placeholder="Enter email" />
-          <TextInput style={styles.input} placeholder="Enter password" />
-          <TouchableOpacity style={styles.button}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter email"
+            autoCapitalize="none"
+            autoFocus={true}
+            textContentType="emailAddress"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter password"
+            autoCorrect={false}
+            secureTextEntry={true}
+            textContentType="password"
+            autoCapitalize="none"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <TouchableOpacity style={styles.button} onPress={onSignUp}>
             <Text style={{ color: "white", fontSize: 18 }}>Sign Up</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: "row", marginTop: 20 }}>
