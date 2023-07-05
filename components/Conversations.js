@@ -20,7 +20,6 @@ export default function Conversations() {
       .then((data) => {
         const users = data.results;
         setData(users);
-        console.log(users[0].picture.thumbnail);
       });
   }, []);
 
