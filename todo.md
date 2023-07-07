@@ -3,5 +3,5 @@ Todo
 # Todo
 
 - [x] navigation
-- [] login func
-- [] direct convo ui
+- [x] login func
+- [x] direct convo ui

@@ -26,6 +26,7 @@ export default function LoginScreen({ navigation }) {
     // }
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Login success");
       navigation.navigate("Home");
     } catch (error) {
       alert("login error", error.message);

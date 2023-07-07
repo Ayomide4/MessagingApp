@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import {
@@ -13,6 +14,7 @@ import {
 
 export default function Conversations() {
   const [data, setData] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetch("https://randomuser.me/api/?results=20")
@@ -30,7 +32,10 @@ export default function Conversations() {
         data={data}
         keyExtractor={(item) => item.id.value + item.registered.date}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.conversationComponent}>
+          <TouchableOpacity
+            style={styles.conversationComponent}
+            onPress={() => navigation.navigate("Chat")}
+          >
             <View style={styles.conversation}>
               <Image
                 source={{ uri: item.picture.thumbnail }}

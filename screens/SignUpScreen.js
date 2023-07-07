@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import { FIREBASE_AUTH } from "../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,12 +14,21 @@ import {
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("");
   const auth = FIREBASE_AUTH;
 
   const onSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        updateProfile(user, {
+          displayName: name ? name : "Ayomide Omotosho",
+          photoURL: avatar
+            ? avatar
+            : "https://gravatar.com/avatar/94d45dbdba988afacf30d916e7aaad69?s=200&d=mp&r=x",
+        });
+
         console.log("Sign up success", user);
       })
       .catch((error) => {

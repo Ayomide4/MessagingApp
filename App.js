@@ -5,10 +5,28 @@ import { StyleSheet, Text, View } from "react-native";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import DirectMessage from "./screens/DirectMessage";
+import Chat from "./screens/Chat";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
+  /*
+   *         <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUpScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+   * */
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -27,10 +45,9 @@ export default function App() {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
-          name="Direct Message"
-          component={DirectMessage}
+          name="Chat"
+          component={Chat}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
