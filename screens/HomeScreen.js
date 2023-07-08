@@ -10,6 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import Conversations from "../components/Conversations";
+import Search from "../components/Search";
 
 export default function HomeScreen() {
   return (
@@ -65,25 +66,7 @@ export default function HomeScreen() {
         }}
       >
         <Text style={styles.title}>Send a message to your friends</Text>
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Search"
-            placeholderTextColor={"white"}
-          />
-          <TouchableOpacity
-            style={{
-              width: 45,
-              height: 45,
-              borderRadius: 35,
-              backgroundColor: "white",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="search" size={20} />
-          </TouchableOpacity>
-        </View>
+        <Search />
       </View>
       <Conversations />
     </SafeAreaView>

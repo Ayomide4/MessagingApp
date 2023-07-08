@@ -17,13 +17,6 @@ export default function LoginScreen({ navigation }) {
   const auth = FIREBASE_AUTH;
 
   const onHandleLogin = async () => {
-    //   signInWithEmailAndPassword(auth, email, password)
-    //     .then(() => {
-    //       console.log("Login success");
-    //       navigation.navigate("Home");
-    //     })
-    //     .catch((error) => alert("login error", error.message));
-    // }
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log("Login success");

@@ -1,5 +1,6 @@
 import { React, useState } from "react";
-import { FIREBASE_AUTH } from "../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   SafeAreaView,
@@ -18,18 +19,27 @@ export default function SignUpScreen({ navigation }) {
   const [avatar, setAvatar] = useState("");
   const auth = FIREBASE_AUTH;
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         updateProfile(user, {
-          displayName: name ? name : "Ayomide Omotosho",
+          displayName: name,
           photoURL: avatar
             ? avatar
             : "https://gravatar.com/avatar/94d45dbdba988afacf30d916e7aaad69?s=200&d=mp&r=x",
         });
 
-        console.log("Sign up success", user);
+        setDoc(doc(FIREBASE_DB, "users", user.uid), {
+          displayName: name,
+          email: email,
+          uid: user.uid,
+        });
+
+        setDoc(doc(FIREBASE_DB, "userChats", user.uid), {});
+
+        navigation.goBack();
+        // console.log("Sign up success", user.displayName);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -45,10 +55,18 @@ export default function SignUpScreen({ navigation }) {
         <View style={styles.form}>
           <Text style={styles.title}>Sign Up</Text>
           <TextInput
+            autoCapitalize="none"
+            style={styles.input}
+            autoFocus={true}
+            placeholder="Enter name"
+            value={name}
+            textContentType="name"
+            onChangeText={(text) => setName(text)}
+          />
+          <TextInput
             style={styles.input}
             placeholder="Enter email"
             autoCapitalize="none"
-            autoFocus={true}
             textContentType="emailAddress"
             value={email}
             onChangeText={(text) => setEmail(text)}
