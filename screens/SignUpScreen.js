@@ -11,6 +11,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -18,6 +19,20 @@ export default function SignUpScreen({ navigation }) {
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
   const auth = FIREBASE_AUTH;
+
+  const selectAvatar = async () => {
+    try {
+      const res = await DocumentPicker.getDocumentAsync({
+        type: "image/*",
+        copyToCacheDirectory: true,
+      });
+      if (res.type === "success") {
+        setAvatar(res.uri);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const onSignUp = async () => {
     createUserWithEmailAndPassword(auth, email, password)
@@ -81,6 +96,22 @@ export default function SignUpScreen({ navigation }) {
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
+
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+            }}
+            onPress={selectAvatar}
+          >
+            <Image
+              style={{ width: 40, height: 40, marginRight: 10 }}
+              source={require("../assets/addAvatar.png")}
+            />
+            <Text style={{ fontSize: 16 }}>Add an avatar</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.button} onPress={onSignUp}>
             <Text style={{ color: "white", fontSize: 18 }}>Sign Up</Text>
           </TouchableOpacity>

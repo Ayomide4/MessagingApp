@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { collection, query, where } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import {
   View,
   TouchableOpacity,
@@ -9,20 +9,33 @@ import {
   TextInput,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { FIREBASE_DB } from "../firebaseConfig";
 
 export default function Search() {
   const [userName, setUserName] = useState();
   const [user, setUser] = useState();
   const [err, setErr] = useState();
 
-  const handleSearch = () => {
-    console.log(userName);
+  const handleSearch = async () => {
+    const userRef = collection(FIREBASE_DB, "users");
+    const q = query(userRef, where("displayName", "==", userName));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setUser(doc.data());
+        console.log(doc.data());
+      });
+    } catch (err) {
+      setErr(true);
+    }
   };
 
   return (
     <View style={styles.searchContainer}>
       <TextInput
         style={styles.input}
+        autoCapitalize="none"
         placeholder="Search"
         placeholderTextColor={"white"}
         onChangeText={(text) => setUserName(text)}

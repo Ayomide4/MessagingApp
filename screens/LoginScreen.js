@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
