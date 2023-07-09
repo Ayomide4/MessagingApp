@@ -42,12 +42,27 @@ export default function SignUpScreen({ navigation }) {
     setAvatar(result.assets[0].uri);
   };
 
-  const uploadImage = async () => {
+  const uploadImage = async (user) => {
     const response = await fetch(avatar);
     const blob = await response.blob();
     const date = Date.now();
     const storageRef = ref(storage, `${name + date}`);
     const uploadTask = uploadBytesResumable(storageRef, blob);
+    uploadBytesResumable(storageRef, blob).then((snapshot) => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        updateProfile(user, {
+          displayName: name,
+          photoURL: downloadURL,
+        });
+
+        setDoc(doc(FIREBASE_DB, "users", user.uid), {
+          displayName: name,
+          email: email,
+          uid: user.uid,
+          photoURL: downloadURL,
+        });
+      });
+    });
   };
 
   const onSignUp = async () => {
@@ -55,18 +70,7 @@ export default function SignUpScreen({ navigation }) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          updateProfile(user, {
-            displayName: name,
-            photoURL: avatar,
-          });
-
-          uploadImage();
-          setDoc(doc(FIREBASE_DB, "users", user.uid), {
-            displayName: name,
-            email: email,
-            uid: user.uid,
-            photoURL: avatar,
-          });
+          uploadImage(user);
 
           setDoc(doc(FIREBASE_DB, "userChats", user.uid), {});
 
