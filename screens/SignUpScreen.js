@@ -1,6 +1,16 @@
 import { React, useState } from "react";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
+import {
+  FIREBASE_AUTH,
+  FIREBASE_DB,
+  FIREBASE_STORAGE,
+} from "../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   SafeAreaView,
@@ -11,7 +21,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -19,48 +29,96 @@ export default function SignUpScreen({ navigation }) {
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
   const auth = FIREBASE_AUTH;
+  const storage = FIREBASE_STORAGE;
 
-  const selectAvatar = async () => {
-    try {
-      const res = await DocumentPicker.getDocumentAsync({
-        type: "image/*",
-        copyToCacheDirectory: true,
-      });
-      if (res.type === "success") {
-        setAvatar(res.uri);
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    setAvatar(result.assets[0].uri);
+  };
+
+  const uploadImage = async () => {
+    const response = await fetch(avatar);
+    const blob = await response.blob();
+    const date = Date.now();
+    const storageRef = ref(storage, `${name + date}`);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
   };
 
   const onSignUp = async () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        updateProfile(user, {
-          displayName: name,
-          photoURL: avatar
-            ? avatar
-            : "https://gravatar.com/avatar/94d45dbdba988afacf30d916e7aaad69?s=200&d=mp&r=x",
+    try {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name,
+            photoURL: avatar,
+          });
+
+          uploadImage();
+          setDoc(doc(FIREBASE_DB, "users", user.uid), {
+            displayName: name,
+            email: email,
+            uid: user.uid,
+            photoURL: avatar,
+          });
+
+          setDoc(doc(FIREBASE_DB, "userChats", user.uid), {});
+
+          navigation.goBack();
+          // console.log("Sign up success", user.displayName);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log("Sign up error", errorCode, errorMessage);
         });
+    } catch (error) {
+      alert("Sign up error", error.message);
+    }
 
-        setDoc(doc(FIREBASE_DB, "users", user.uid), {
-          displayName: name,
-          email: email,
-          uid: user.uid,
-        });
-
-        setDoc(doc(FIREBASE_DB, "userChats", user.uid), {});
-
-        navigation.goBack();
-        // console.log("Sign up success", user.displayName);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("Sign up error", errorCode, errorMessage);
-      });
+    // createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     const user = userCredential.user;
+    //     uploadTask.on(
+    //       (error) => {
+    //         // Handle unsuccessful uploads
+    //         console.log(error);
+    //       },
+    //       () => {
+    //         // Handle successful uploads on complete
+    //         // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+    //         console.log("start");
+    //         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //           console.log("File available at", downloadURL);
+    //           updateProfile(user, {
+    //             displayName: name,
+    //             photoURL: downloadURL,
+    //           });
+    //           setDoc(doc(FIREBASE_DB, "users", user.uid), {
+    //             displayName: name,
+    //             email: email,
+    //             uid: user.uid,
+    //             photoURL: imageBlob,
+    //           });
+    //           setDoc(doc(FIREBASE_DB, "userChats", user.uid), {});
+    //           console.log("User created", downloadURL);
+    //         });
+    //       }
+    //     );
+    //
+    //     navigation.goBack();
+    //   })
+    // .catch((error) => {
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   console.log("Sign up error", errorCode, errorMessage);
+    // });
   };
 
   return (
@@ -103,7 +161,7 @@ export default function SignUpScreen({ navigation }) {
               alignItems: "center",
               width: "100%",
             }}
-            onPress={selectAvatar}
+            onPress={pickImage}
           >
             <Image
               style={{ width: 40, height: 40, marginRight: 10 }}
