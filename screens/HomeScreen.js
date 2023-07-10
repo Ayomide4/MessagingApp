@@ -1,4 +1,5 @@
-import React from "react";
+import { useState } from "react";
+import { signOut } from "firebase/auth";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -7,12 +8,19 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  TextInput,
+  Image,
 } from "react-native";
 import Conversations from "../components/Conversations";
 import Search from "../components/Search";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
+  const [user, setUser] = useState();
+  const logOut = () => {
+    signOut(FIREBASE_AUTH);
+    navigation.replace("Login");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -24,9 +32,12 @@ export default function HomeScreen() {
         style={styles.background}
       />
       <View style={styles.profileContainer}>
-        <TouchableOpacity style={styles.profile}>
-          <Text>A</Text>
-        </TouchableOpacity>
+        <Image
+          source={{
+            uri: FIREBASE_AUTH?.currentUser.photoURL,
+          }}
+          style={styles.profile}
+        ></Image>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             style={{
@@ -53,8 +64,9 @@ export default function HomeScreen() {
               justifyContent: "center",
               zIndex: -1,
             }}
+            onPress={logOut}
           >
-            <Ionicons name="ellipsis-horizontal" size={18} />
+            <Ionicons name="log-out-outline" size={24} />
           </TouchableOpacity>
         </View>
       </View>
@@ -66,9 +78,9 @@ export default function HomeScreen() {
         }}
       >
         <Text style={styles.title}>Send a message to your friends</Text>
-        <Search />
+        <Search user={user} setUser={setUser} />
       </View>
-      <Conversations />
+      <Conversations user={user} />
     </SafeAreaView>
   );
 }

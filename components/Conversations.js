@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function Conversations() {
+export default function Conversations({ user }) {
   const [data, setData] = useState(null);
   const navigation = useNavigation();
 
@@ -27,6 +27,11 @@ export default function Conversations() {
 
   return (
     <View style={styles.container}>
+      {user && (
+        <View>
+          <Text>{user.displayName}</Text>
+        </View>
+      )}
       <FlatList
         style={styles.scroll}
         data={data}

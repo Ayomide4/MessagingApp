@@ -21,31 +21,12 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
 
   useLayoutEffect(() => {
-    // get messages from firebase
-    // const q = query(
-    //   collection(FIREBASE_DB, "chats"),
-    //   orderBy("createdAt", "desc")
-    // );
-    // // listen to changes in the collection
-    // const unsubscribe = onSnapshot(q, (snapshot) =>
-    //   setMessages(
-    //     snapshot.docs.map((doc) => ({
-    //       _id: doc.data()._id,
-    //       createdAt: doc.data().createdAt.toDate(),
-    //       text: doc.data().text,
-    //       user: doc.data().user,
-    //     }))
-    //   )
-    // );
-    //
-    // //stop listening to changes in the collection
-    // return () => unsubscribe();
-
     const q = query(
       collection(FIREBASE_DB, "solo_chats"),
       orderBy("createdAt", "desc")
     );
 
+    // listen to changes in the collection
     const unsubscribe = onSnapshot(q, (snapshot) =>
       setMessages(
         snapshot.docs.map((doc) => ({
@@ -68,7 +49,6 @@ export default function Chat() {
     addDoc(collection(FIREBASE_DB, "chats"), { _id, createdAt, text, user });
   }, []);
 
-  console.log(FIREBASE_AUTH?.currentUser);
   return (
     <SafeAreaView style={{ width: "100%", height: "100%" }}>
       <GiftedChat
