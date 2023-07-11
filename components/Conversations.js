@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
+import {
+  firestore,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import {
@@ -16,34 +24,45 @@ export default function Conversations({ user }) {
   const [data, setData] = useState(null);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    fetch("https://randomuser.me/api/?results=20")
-      .then((response) => response.json())
-      .then((data) => {
-        const users = data.results;
-        setData(users);
+  const getUsers = async () => {
+    const userRef = collection(FIREBASE_DB, "users");
+    const q = query(userRef, where("uid", "!=", FIREBASE_AUTH.currentUser.uid));
+    let usersArray = [];
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        usersArray = [...usersArray, doc.data()];
+        setData(usersArray);
       });
+    } catch (err) {
+      setErr(true);
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
   }, []);
 
   return (
     <View style={styles.container}>
-      {user && (
-        <View>
-          <Text>{user.displayName}</Text>
-        </View>
-      )}
       <FlatList
-        style={styles.scroll}
+        style={styles.scrollReact}
         data={data}
-        keyExtractor={(item) => item.id.value + item.registered.date}
+        keyExtractor={(item) => item.uid}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.conversationComponent}
-            onPress={() => navigation.navigate("Chat")}
+            onPress={() =>
+              navigation.navigate("Chat", {
+                name: item.displayName,
+                photoURL: item.photoURL,
+                uid: item.uid,
+              })
+            }
           >
             <View style={styles.conversation}>
               <Image
-                source={{ uri: item.picture.thumbnail }}
+                source={{ uri: item.photoURL }}
                 style={{
                   width: 60,
                   height: 60,
@@ -52,9 +71,7 @@ export default function Conversations({ user }) {
                 }}
               />
               <View style={styles.online}>
-                <Text
-                  style={styles.name}
-                >{`${item.name.first} ${item.name.last}`}</Text>
+                <Text style={styles.name}>{`${item.displayName}`}</Text>
                 <Text>2:00pm</Text>
               </View>
               <View style={styles.messageRead}>
@@ -98,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     position: "relative",
-    top: -80,
+    top: 0,
     left: 0,
     justifyContent: "center",
     alignItems: "center",
