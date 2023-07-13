@@ -20,7 +20,7 @@ import {
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
 export default function Conversations({ user }) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const navigation = useNavigation();
   let lastMessageArray = [];
 
@@ -40,7 +40,7 @@ export default function Conversations({ user }) {
       });
 
       // get last messages
-      usersArray.forEach(async (user) => {
+      usersArray.forEach(async (user, index) => {
         const combinedId =
           FIREBASE_AUTH.currentUser.uid > user.uid
             ? FIREBASE_AUTH.currentUser.uid + user.uid
@@ -49,7 +49,6 @@ export default function Conversations({ user }) {
         const docRef = doc(FIREBASE_DB, "userChats", combinedId);
         const docSnap = await getDoc(docRef);
         lastMessageArray = [...lastMessageArray, docSnap.data()];
-        console.log(lastMessageArray[0].lastMessage);
       });
     } catch (err) {
       setErr(true);
@@ -111,10 +110,6 @@ export default function Conversations({ user }) {
               />
               <View style={styles.online}>
                 <Text style={styles.name}>{`${item.displayName}`}</Text>
-                <Text>2:00pm</Text>
-              </View>
-              <View style={styles.messageRead}>
-                <Text style={styles.displayMessage}>test</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -132,8 +127,10 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
-    height: "30%",
-    backgroundColor: "white",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "green",
+    backgroundColor: "black",
     borderRadius: 20,
     marginBottom: 10,
   },
@@ -143,11 +140,11 @@ const styles = StyleSheet.create({
     paddingTop: 80,
   },
   name: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "600",
   },
   conversationComponent: {
-    height: 150,
+    height: 100,
     marginBottom: 10,
     width: "98%",
     backgroundColor: "#FFFFFF",
@@ -162,9 +159,12 @@ const styles = StyleSheet.create({
   conversation: {
     width: "92%",
     height: "100%",
+    alignItems: "center",
+    flexDirection: "row",
   },
   online: {
     flexDirection: "row",
+    marginLeft: 30,
     justifyContent: "space-between",
     marginBottom: 10,
   },

@@ -80,7 +80,14 @@ export default function SignUpScreen({ navigation }) {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          console.log("Sign up error", errorCode, errorMessage);
+          console.log(errorCode === "auth/email-already-in-use");
+          if (errorCode === "auth/email-already-in-use") {
+            alert("Email already in use");
+          } else if (errorCode === "auth/invalid-email") {
+            alert("Invalid email");
+          } else if (errorCode === "auth/weak-password") {
+            alert("Weak password");
+          }
         });
     } catch (error) {
       alert("Sign up error", error.message);
