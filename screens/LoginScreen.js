@@ -10,7 +10,6 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -20,7 +19,6 @@ export default function LoginScreen({ navigation }) {
   const onHandleLogin = async () => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Login success");
       navigation.navigate("Home");
     } catch (error) {
       alert("login error", error.message);

@@ -1,39 +1,26 @@
-import { getAuth } from "firebase/auth";
 import {
-  Firestore,
-  getDoc,
-  setDoc,
-  getDocs,
   collection,
   doc,
+  updateDoc,
+  setDoc,
   onSnapshot,
-  where,
   addDoc,
   orderBy,
   query,
-  serverTimestamp,
-  updateDoc,
-  Timestamp,
-  arrayUnion,
 } from "firebase/firestore";
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import React, { useCallback, useLayoutEffect, useState } from "react";
+import { SafeAreaView } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
-import { v4 as uuidv4 } from "uuid";
 
 export default function Chat({ route }) {
   const [messages, setMessages] = useState([]);
-  const { name, photoURL, uid } = route.params;
+  const { uid } = route.params;
+
   const chatId =
-    uid > FIREBASE_AUTH.currentUser.uid
-      ? uid + FIREBASE_AUTH.currentUser.uid
-      : FIREBASE_AUTH.currentUser.uid + uid;
+    FIREBASE_AUTH.currentUser.uid > uid
+      ? FIREBASE_AUTH.currentUser.uid + uid
+      : uid + FIREBASE_AUTH.currentUser.uid;
 
   useLayoutEffect(() => {
     const chatRef = collection(FIREBASE_DB, "chats");
@@ -54,10 +41,8 @@ export default function Chat({ route }) {
     });
   }, []);
 
-  // TODO: FIGURE OUT HOW TO ADD MESSAGE TO MESSAGE ARRAY IN FIREBASE AND THE DISPLAY MESSAGES ONLY TO THE CORRECT CURRENT AND OTHER USER
-  //useCallback is a hook that will prevent the function from being recreated every time the component re-renders
-  const onSend = useCallback((sentMessage = []) => {
-    // getMessages();
+  const onSend = useCallback(async (sentMessage = []) => {
+    // when a message is sent, we want to add it to the database
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, sentMessage)
     );
@@ -73,6 +58,16 @@ export default function Chat({ route }) {
       text,
       user,
     });
+
+    const userChatsRef = doc(FIREBASE_DB, "userChats", chatId);
+    try {
+      await updateDoc(userChatsRef, {
+        lastMessage: text,
+        lastMessageSentAt: createdAt,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (

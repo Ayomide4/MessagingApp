@@ -44,21 +44,6 @@ export default function HomeScreen({ navigation }) {
               width: 45,
               height: 45,
               borderRadius: 30,
-              backgroundColor: "black",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1,
-              position: "absolute",
-              right: 34,
-            }}
-          >
-            <Ionicons name="person-add" color="white" size={18} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: 45,
-              height: 45,
-              borderRadius: 30,
               backgroundColor: "white",
               alignItems: "center",
               justifyContent: "center",
@@ -78,7 +63,8 @@ export default function HomeScreen({ navigation }) {
         }}
       >
         <Text style={styles.title}>Send a message to your friends</Text>
-        <Search user={user} setUser={setUser} />
+        {/* <Search user={user} setUser={setUser} />
+         */}
       </View>
       <Conversations user={user} />
     </SafeAreaView>

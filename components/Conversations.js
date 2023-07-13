@@ -1,41 +1,86 @@
-import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 import {
-  firestore,
-  getDocs,
   collection,
+  doc,
+  getDoc,
+  getDocs,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TouchableOpacity,
+  View,
 } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
 export default function Conversations({ user }) {
   const [data, setData] = useState(null);
   const navigation = useNavigation();
+  let lastMessageArray = [];
 
   const getUsers = async () => {
     const userRef = collection(FIREBASE_DB, "users");
     const q = query(userRef, where("uid", "!=", FIREBASE_AUTH.currentUser.uid));
+    // const chatRef = collection(FIREBASE_DB, "chats");
     let usersArray = [];
+    let chatIdArray = [];
+
     try {
+      // get all users
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         usersArray = [...usersArray, doc.data()];
         setData(usersArray);
       });
+
+      // get last messages
+      usersArray.forEach(async (user) => {
+        const combinedId =
+          FIREBASE_AUTH.currentUser.uid > user.uid
+            ? FIREBASE_AUTH.currentUser.uid + user.uid
+            : user.uid + FIREBASE_AUTH.currentUser.uid;
+        chatIdArray = [...chatIdArray, combinedId];
+        const docRef = doc(FIREBASE_DB, "userChats", combinedId);
+        const docSnap = await getDoc(docRef);
+        lastMessageArray = [...lastMessageArray, docSnap.data()];
+        console.log(lastMessageArray[0].lastMessage);
+      });
     } catch (err) {
       setErr(true);
+    }
+  };
+
+  const handleClick = async (item) => {
+    navigation.navigate("Chat", {
+      name: item.displayName,
+      photoURL: item.photoURL,
+      uid: item.uid,
+    });
+
+    const combinedId =
+      FIREBASE_AUTH.currentUser.uid > item.uid
+        ? FIREBASE_AUTH.currentUser.uid + item.uid
+        : item.uid + FIREBASE_AUTH.currentUser.uid;
+
+    try {
+      const docRef = doc(FIREBASE_DB, "userChats", combinedId);
+      const docSnap = await getDoc(docRef);
+
+      // if userChats doc doesn't exist, create it
+      if (!docSnap.exists()) {
+        await setDoc(doc(FIREBASE_DB, "userChats", combinedId), {
+          lastMessage: "",
+          lastMessageSentAt: "",
+        });
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -52,13 +97,7 @@ export default function Conversations({ user }) {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.conversationComponent}
-            onPress={() =>
-              navigation.navigate("Chat", {
-                name: item.displayName,
-                photoURL: item.photoURL,
-                uid: item.uid,
-              })
-            }
+            onPress={() => handleClick(item)}
           >
             <View style={styles.conversation}>
               <Image
@@ -75,8 +114,7 @@ export default function Conversations({ user }) {
                 <Text>2:00pm</Text>
               </View>
               <View style={styles.messageRead}>
-                <Text style={styles.displayMessage}>Hey, how are you?</Text>
-                <MaterialIcons name={"done-all"} size={20} />
+                <Text style={styles.displayMessage}>test</Text>
               </View>
             </View>
           </TouchableOpacity>
