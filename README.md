@@ -1,9 +1,6 @@
 # MessagingApp
-
-## Full Stack messaging app 
-
 ## What does this app do?
-  This application lets users send messages between each other in real-time! 
+  This is a full stack mobile application that lets users send messages between each other in real-time! 
 
 | Technologies Used | Image |
 | --- | --- |
