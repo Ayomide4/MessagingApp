@@ -8,8 +8,9 @@
         }
       ]
     ],
-    "name": "SocialApp",
-    "slug": "SocialApp",
+    "name": "Messaging App",
+    "slug": "messaging-app",
+    "description": "A chat app that allows users to create an account, login, and chat with other users. The app uses React Native, Expo, and Firebase.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
