@@ -25,6 +25,19 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const demoLogin = async () => {
+    try {
+      const response = await signInWithEmailAndPassword(
+        auth,
+        "test@gmail.com",
+        "123123"
+      );
+      navigation.navigate("Home");
+    } catch (error) {
+      alert("login error", error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.backImg} source={require("../assets/login.jpg")} />
@@ -67,6 +80,17 @@ export default function LoginScreen({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={demoLogin}>
+            <Text
+              style={{
+                color: "#131929",
+                textDecorationLine: "underline",
+                fontSize: 16,
+              }}
+            >
+              Demo User
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
